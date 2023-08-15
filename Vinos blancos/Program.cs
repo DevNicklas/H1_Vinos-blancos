@@ -11,9 +11,6 @@ namespace Vinos_blancos
     {
         static void Main(string[] args)
         {
-            // Gets the statistics of wine sales from 2009 to 2019
-            int[,] statisticsArr = SortStatistics(GetStatistics());
-
             // Draws a table of the statistics of wine sales from 2009 to 2019
             DrawTable(16, 0);
 
