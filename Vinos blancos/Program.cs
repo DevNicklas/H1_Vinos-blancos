@@ -14,20 +14,13 @@ namespace Vinos_blancos
             // Gets the statistics of wine sales from 2009 to 2019
             int[,] statisticsArr = SortStatistics(GetStatistics());
 
-            DrawTable(16, 0, statisticsArr);
-            //wineArr[5] += 35432;
+            // Draws a table of the statistics of wine sales from 2009 to 2019
+            DrawTable(16, 0);
 
-            // Draws every graph box
-            for(int i = 0; i < statisticsArr.GetLength(1); i++)
-            {
-                // x position is: 18+i*8  -  18 is the start position, i is the index of the graph box, 8 is amount of characters from first character to last character
-                // y position is: 2  -  Its the start position
-                // Height of box is: 28  -  Which is the amount of characters from top to bottom
-                // Width of box is: 4  -  Which is the amount of characters from left to right
-                // Wine in liters is: statisticsArr[1, i]  -  The correct value of the printed graph, which is used to draw the color inside
-                // Highest amount of wine in liters is: statisticsArr[1, statisticsArr.GetLength(1)-1]  -  Which is found by the last index of the wine section which is on row 1
-                DrawGraphBox(18+i*8, 2, 28, 4, statisticsArr[1, i], statisticsArr[1, statisticsArr.GetLength(1)-1]);
-            }
+            // Draws all graph boxes and graphs inside the graph boxes
+            DrawAllGraphBoxes(18, 2, 28, 4);
+
+            // Waits for a user input
             Console.ReadLine();
         }
 
@@ -61,91 +54,124 @@ namespace Vinos_blancos
             // Returns the 2-dimensional array with statistics of wine sales from 2009 to 2019
             return statisticsArr;
         }
-        
+
         #endregion
 
         #region View
 
-        private static void DrawTable(int x, int y, int[,] statisticArr)
+        /// <summary>
+        /// Draws a table of the statistics of wine sales from 2009 to 2019
+        /// </summary>
+        /// <param name="x">start position of x</param>
+        /// <param name="y">start position of y</param>
+        /// <param name="statisticArr">array of statistics</param>
+        private static void DrawTable(int x, int y)
         {
+            // Gets the statistics of wine sales from 2009 to 2019
+            int[,] statisticsArr = SortStatistics(GetStatistics());
+
             // Sets position of the cursor to the start position
             Console.SetCursorPosition(x, y);
 
             // Prints the year
-            for (int i = 0; i < statisticArr.GetLength(1); i++)
+            for (int i = 0; i < statisticsArr.GetLength(1); i++)
             {
                 Console.BackgroundColor = ConsoleColor.DarkBlue;
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.Write("  " + statisticArr[0, i] + "  ");
+                Console.Write("  " + statisticsArr[0, i] + "  ");
             }
 
             // Cursor position set to start x position and +1 of the start y position
             Console.SetCursorPosition(x, y+1);
 
             // Prints amount of wine in leters
-            for (int i = 0; i < statisticArr.GetLength(1); i++)
+            for (int i = 0; i < statisticsArr.GetLength(1); i++)
             {
                 Console.BackgroundColor = ConsoleColor.Blue;
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.Write(" " + statisticArr[1, i] + " ");
+                Console.Write(" " + statisticsArr[1, i] + " ");
             }
         }
 
-        private static void DrawGraphBox(int x, int y, int height, int width, int wineLiters, int highestWineLiters)
+        /// <summary>
+        /// Draws all graph boxes within some criterias
+        /// </summary>
+        /// <param name="x">start position of x</param>
+        /// <param name="y">start position of y</param>
+        /// <param name="height">height of graph box</param>
+        /// <param name="width">width of graph box</param>
+        private static void DrawAllGraphBoxes(int x, int y, int height, int width)
         {
-            // Sets the foreground and background color to its default color
+            // Sets foreground and background console colors to their defaults
             Console.ResetColor();
 
             // Subtracts 2 from width, which makes the width correct
             width -= 2;
 
-            // Sets position of cursor to chosen x and y pos, and writes the first horizontal line
-            Console.SetCursorPosition(x, y);
-            Console.Write('╔' + new string('═', width) + '╗');
+            // Gets the statistics of wine sales from 2009 to 2019
+            int[,] statisticsArr = SortStatistics(GetStatistics());
 
-            // Sets position of cursor to chosen x pos and chosen y pos added with the height of the box
-            // and writes the second horizontal line
-            Console.SetCursorPosition(x, y+height-1);
-            Console.Write('╚' + new string('═', width) + '╝');
-
-            // Draws two vertical lines
-            for(int i = 0; i < 2; i++)
+            for (int i = 0; i < statisticsArr.GetLength(1); i++)
             {
-                for (int j = 0; j < height-2; j++)
+                // Sets position of cursor to chosen x and y pos, and writes the first horizontal line
+                Console.SetCursorPosition(x + i * 8, y);
+                Console.Write('╔' + new string('═', width) + '╗');
+
+                // Sets position of cursor to chosen x pos and chosen y pos added with the height of the box
+                // and writes the second horizontal line
+                Console.SetCursorPosition(x + i * 8, y + height - 1);
+                Console.Write('╚' + new string('═', width) + '╝');
+
+                // Draws two vertical lines
+                for (int j = 0; j < 2; j++)
                 {
-                    // Position x is calculated by adding 1 to the width, multiply that by the index of the vertical line (either 1 or 2)
-                    // and adding that to the position of x
-                    // Position y is calculated by adding 1 and the loop index
-                    Console.SetCursorPosition(x + (width + 1) * i, y + j + 1);
-                    Console.Write('║');
+                    for (int k = 0; k < height - 2; k++)
+                    {
+                        // Position x is calculated by adding 1 to the width, multiply that by the index of the vertical line (either 1 or 2)
+                        // and adding that to the position of x
+                        // Position y is calculated by adding 1 and the loop index
+                        Console.SetCursorPosition(x + i * 8 + (width + 1) * j, y + k + 1);
+                        Console.Write('║');
+                    }
                 }
+
+                // Max amount of chars in the bar graph
+                int maxChar = 26;
+
+                // Amount of wine litres used for calculating the bar graph
+                int wineLiters = statisticsArr[1, i];
+
+                // heighest amount of wine litres used for calculating the bar graph
+                int highestWineLiters = statisticsArr[1, statisticsArr.GetLength(1) - 1];
+
+                // Amount of chars to print in the graph specific to a year
+                int graphCharAmount = maxChar * wineLiters / highestWineLiters;
+
+                // Sets background console color to dark gray
+                Console.BackgroundColor = ConsoleColor.DarkGray;
+
+                // Prints the graphc
+                for (int j = 0; j < graphCharAmount; j++)
+                {
+                    // Sets cursor position and goes one up for each loop index
+                    Console.SetCursorPosition(x + i * 8 + 1, y + 26 - j);
+                    Console.Write(new string(' ', 2));
+                }
+
+                // Sets foreground and background console colors to their defaults
+                Console.ResetColor();
             }
-
-            // Max amount of chars in the bar graph
-            int maxChar = 26;
-
-            // Amount of chars to print in the graph specific to a year
-            int graphCharAmount = maxChar*wineLiters/highestWineLiters;
-
-            // Sets background console color to dark gray
-            Console.BackgroundColor = ConsoleColor.DarkGray;
-
-            // Prints the graphc
-            for(int j = 0; j < graphCharAmount; j++)
-            {
-                // Sets cursor position and goes one up for each loop index
-                Console.SetCursorPosition(x + 1, y + 26 - j);
-                Console.Write(new string(' ', 2));
-            }
-
-            // Sets foreground and background console colors to their defaults
-            Console.ResetColor();
         }
 
         #endregion
 
         #region Controller
 
+        /// <summary>
+        /// Sorts the array of statistics of wine sales from 2009 to 2019
+        /// </summary>
+        /// <param name="statisticsArr">array of statistics</param>
+        /// <returns>An sorted statistics array of wine sales from 2009 to 2019</returns>
         private static int[,] SortStatistics(int[,] statisticsArr)
         {
             // Two arrays for seperating one 2-dimensional array
